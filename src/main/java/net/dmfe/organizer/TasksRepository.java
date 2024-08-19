@@ -6,4 +6,6 @@ public interface TasksRepository {
 
     List<Task> findAll();
 
+    void save(Task task);
+
 }

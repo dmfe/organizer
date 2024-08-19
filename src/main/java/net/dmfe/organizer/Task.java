@@ -2,10 +2,10 @@ package net.dmfe.organizer;
 
 import java.util.UUID;
 
-public record Task(UUID id, String description, boolean completed) {
+public record Task(UUID id, String details, boolean completed) {
 
-    public Task(String description) {
-        this(UUID.randomUUID(), description, false);
+    public Task(String details) {
+        this(UUID.randomUUID(), details, false);
     }
 
 }
