@@ -1,8 +1,10 @@
 package net.dmfe.organizer;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import static net.dmfe.organizer.JdbcOperationsTasksRepository.JDBC_OPERATIONS;
+
 @RestController
 @RequestMapping("/api/tasks")
 public class TasksController {
@@ -23,7 +27,10 @@ public class TasksController {
     private final TasksRepository tasksRepository;
     private final MessageSource messageSource;
 
-    public TasksController(TasksRepository tasksRepository, MessageSource messageSource) {
+    public TasksController(
+            @Qualifier(JDBC_OPERATIONS) TasksRepository tasksRepository,
+            MessageSource messageSource
+    ) {
         this.tasksRepository = tasksRepository;
         this.messageSource = messageSource;
     }
@@ -41,6 +48,7 @@ public class TasksController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<?> handleCreateTask(
             @RequestBody NewTaskPayload taskPayload,
             UriComponentsBuilder uriComponentsBuilder,

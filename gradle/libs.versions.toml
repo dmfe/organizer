@@ -1,0 +1,5 @@
+[versions]
+testcontainersPostgres = "1.19.8"
+
+[libraries]
+testcontainersPostgres = {module = "org.testcontainers:postgresql", version.ref = "testcontainersPostgres"}

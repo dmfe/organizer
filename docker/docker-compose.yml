@@ -1,0 +1,17 @@
+services:
+
+  db:
+    image: postgres:16.4
+    container_name: organizer_postgres
+    environment:
+      POSTGRES_DB: "organizer"
+      POSTGRES_USER: "organizer_app"
+      POSTGRES_PASSWORD: "sqrt___123"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - org-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  org-data:

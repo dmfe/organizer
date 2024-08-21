@@ -1,21 +1,15 @@
 package net.dmfe.organizer;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -23,6 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Sql("/sql/tasks_rest_controller/test_data.sql")
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
 class TasksControllerIT {
@@ -30,30 +26,10 @@ class TasksControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private InMemoryTasksRepository tasksRepository;
-
-    @AfterEach
-    void tearDown() {
-        tasksRepository.getTasks().clear();
-    }
-
     @Test
     void handleGetAllTasks_ReturnsValidResponse() throws Exception {
         // given
         var requestBuilder = get("/api/tasks");
-        tasksRepository.getTasks().addAll(List.of(
-                new Task(
-                        UUID.fromString("a8851f7b-6341-47b5-8584-617b55a8cf5e"),
-                        "Task one",
-                        false
-                ),
-                new Task(
-                        UUID.fromString("d7a24240-ed79-4332-994a-8f2aeb3ba277"),
-                        "Task two",
-                        true
-                )
-        ));
 
         // when
         mockMvc.perform(requestBuilder)
@@ -107,12 +83,6 @@ class TasksControllerIT {
                         ),
                         jsonPath("$.id").exists()
                 );
-        assertEquals(1, tasksRepository.getTasks().size());
-        var task = tasksRepository.getTasks().stream().findFirst().orElse(null);
-        assertNotNull(task);
-        assertNotNull(task.id());
-        assertEquals("Task three", task.details());
-        assertFalse(task.completed());
     }
 
     @Test
@@ -142,7 +112,6 @@ class TasksControllerIT {
                                 """, true
                         )
                 );
-        assertTrue(tasksRepository.getTasks().isEmpty());
     }
 
 }

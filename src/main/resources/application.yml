@@ -1,0 +1,7 @@
+spring:
+  application:
+    name:organizer
+  datasource:
+    url: jdbc:postgresql://localhost:5432/organizer
+    username: organizer_app
+    password: sqrt___123
