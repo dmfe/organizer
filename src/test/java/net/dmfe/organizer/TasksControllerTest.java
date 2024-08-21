@@ -116,4 +116,5 @@ class TasksControllerTest {
         assertEquals(new ErrorResponse(List.of(errorMessage)), responseEntity.getBody());
         verifyNoMoreInteractions(tasksRepository);
     }
+
 }

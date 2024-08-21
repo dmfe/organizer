@@ -10,10 +10,7 @@ import java.util.UUID;
 @Repository
 public class InMemoryTasksRepository implements TasksRepository {
 
-    private final List<Task> tasks = new LinkedList<>() {{
-        add(new Task("Task one"));
-        add(new Task("Task two"));
-    }};
+    private final List<Task> tasks = new LinkedList<>();
 
     @Override
     public List<Task> findAll() {
@@ -30,6 +27,10 @@ public class InMemoryTasksRepository implements TasksRepository {
     @Override
     public void save(Task task) {
         tasks.add(task);
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
     }
 
 }
