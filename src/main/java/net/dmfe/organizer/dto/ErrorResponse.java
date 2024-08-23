@@ -1,4 +1,4 @@
-package net.dmfe.organizer;
+package net.dmfe.organizer.dto;
 
 import java.util.List;
 

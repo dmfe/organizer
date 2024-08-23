@@ -1,5 +1,6 @@
-package net.dmfe.organizer;
+package net.dmfe.organizer.repository;
 
+import net.dmfe.organizer.entity.Task;
 import org.springframework.stereotype.Repository;
 
 import java.util.LinkedList;
@@ -22,6 +23,20 @@ public class InMemoryTasksRepository implements TasksRepository {
         return tasks.stream()
                 .filter(task -> task.id().equals(id))
                 .findFirst();
+    }
+
+    @Override
+    public Optional<Task> findByIdAndByAppUserID(UUID id, UUID userId) {
+        return tasks.stream()
+                .filter(task -> task.id().equals(id) && task.userId().equals(userId))
+                .findFirst();
+    }
+
+    @Override
+    public List<Task> findByAppUserId(UUID id) {
+        return tasks.stream()
+                .filter(task -> task.userId().equals(id))
+                .toList();
     }
 
     @Override

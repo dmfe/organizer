@@ -20,12 +20,14 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.postgresql:postgresql")
 	implementation("org.flywaydb:flyway-core")
 
 	runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation(libs.testcontainersPostgres)
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

@@ -1,5 +1,10 @@
-package net.dmfe.organizer;
+package net.dmfe.organizer.controller;
 
+import net.dmfe.organizer.dto.ErrorResponse;
+import net.dmfe.organizer.dto.NewTaskPayload;
+import net.dmfe.organizer.entity.Task;
+import net.dmfe.organizer.entity.User;
+import net.dmfe.organizer.repository.TasksRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,14 +46,16 @@ class TasksControllerTest {
     @DisplayName("GET /api/tasks returns HTTP-response with status 200 and list of tasks")
     void handleGetAllTasks_ReturnsValidResponseEntity() {
         // given
+        var user = new User(UUID.randomUUID(), "user1", "password1");
+
         var tasks = List.of(
-                new Task(UUID.randomUUID(), "Task one", false),
-                new Task(UUID.randomUUID(), "Task two", true)
+                new Task(UUID.randomUUID(), "Task one", false, user.id()),
+                new Task(UUID.randomUUID(), "Task two", true, user.id())
         );
-        doReturn(tasks).when(tasksRepository).findAll();
+        doReturn(tasks).when(tasksRepository).findByAppUserId(user.id());
 
         // when
-        var responseEntity = tasksController.handleGetAllTasks();
+        var responseEntity = tasksController.handleGetAllTasks(user);
 
         // then
         assertNotNull(responseEntity);
@@ -61,10 +68,12 @@ class TasksControllerTest {
     @DisplayName("POST /api/tasks with valid payload returns HTTP-response with 201 code, location and created task")
     void handleCreateTask_PayloadIsValid_ReturnsValidResponseEntity() {
         // given
+        var user = new User(UUID.randomUUID(), "user1", "password1");
         var details = "Task three";
 
         // when
         var responseEntity = tasksController.handleCreateTask(
+                user,
                 new NewTaskPayload(details),
                 UriComponentsBuilder.fromUriString(BASE_LOCATION),
                 Locale.ENGLISH
@@ -78,6 +87,7 @@ class TasksControllerTest {
             assertNotNull(task.id());
             assertEquals(details, task.details());
             assertFalse(task.completed());
+            assertEquals(user.id(), task.userId());
             assertEquals(
                     URI.create(String.format("%s/api/tasks/%s", BASE_LOCATION, task.id())),
                     responseEntity.getHeaders().getLocation()
@@ -93,6 +103,7 @@ class TasksControllerTest {
     @DisplayName("POST /api/tasks with invalid payload returns HTTP-response with 400 code and list of errors")
     void handleCreateTask_PayloadIsInvalid_ReturnsValidResponseEntity() {
         // given
+        var user = new User(UUID.randomUUID(), "user1", "password1");
         var details = "  ";
         var errorMessage = "Task details not defined";
         var locale = Locale.ENGLISH;
@@ -104,6 +115,7 @@ class TasksControllerTest {
 
         // when
         var responseEntity = tasksController.handleCreateTask(
+                user,
                 new NewTaskPayload(details),
                 UriComponentsBuilder.fromUriString(BASE_LOCATION),
                 locale

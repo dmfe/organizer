@@ -1,4 +1,4 @@
-package net.dmfe.organizer;
+package net.dmfe.organizer.dto;
 
 public record NewTaskPayload(String details) {
 }

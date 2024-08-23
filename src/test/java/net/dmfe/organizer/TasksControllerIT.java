@@ -10,6 +10,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,7 +30,8 @@ class TasksControllerIT {
     @Test
     void handleGetAllTasks_ReturnsValidResponse() throws Exception {
         // given
-        var requestBuilder = get("/api/tasks");
+        var requestBuilder = get("/api/tasks")
+                .with(httpBasic("user1", "test_pwd1"));
 
         // when
         mockMvc.perform(requestBuilder)
@@ -43,12 +45,12 @@ class TasksControllerIT {
                                     {
                                         "id": "a8851f7b-6341-47b5-8584-617b55a8cf5e",
                                         "details": "Task one",
-                                        "completed": false
+                                        "completed": true
                                     },
                                     {
                                         "id": "d7a24240-ed79-4332-994a-8f2aeb3ba277",
                                         "details": "Task two",
-                                        "completed": true
+                                        "completed": false
                                     }
                                 ]
                                 """)
@@ -59,6 +61,7 @@ class TasksControllerIT {
     void handleCreateTask_PayloadIsValid_ReturnsValidResponse() throws Exception {
         // given
         var requestBuilder = post("/api/tasks")
+                .with(httpBasic("user2", "test_pwd2"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -89,6 +92,7 @@ class TasksControllerIT {
     void handleCreateTask_PayloadIsInvalid_ReturnsValidResponse() throws Exception {
         // given
         var requestBuilder = post("/api/tasks")
+                .with(httpBasic("user1", "test_pwd1"))
                 .header(HttpHeaders.ACCEPT_LANGUAGE, "en")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
